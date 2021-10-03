@@ -801,6 +801,10 @@ static void *outputThread(void *arg)
 					continue;
 				if (errno == EINTR)
 					continue;
+				if (errno == EAGAIN) {
+					errormsg("outputThread: error writing to %s at offset 0x%llx: %s\n",dest->arg,(long long)Blocksize*Numout+blocksize-rest,strerror(errno));
+					continue;
+				}
 				dest->result = strerror(errno);
 				errormsg("outputThread: error writing to %s at offset 0x%llx: %s\n",dest->arg,(long long)Blocksize*Numout+blocksize-rest,strerror(errno));
 				MainOutOK = 0;
