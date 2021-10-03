@@ -1,0 +1,12 @@
+#ifndef VERSION_H
+#define VERSION_H
+
+#define VERSION		"unknown"
+#define HG_REV		"unknown"
+#define HG_BRANCH	"unknown"
+#define HG_NODE		"unknown"
+#define HG_ID		"unknown"
+#define HG_TAGS		"unknown"
+#define HG_LATESTTAG	"unknown"
+
+#endif

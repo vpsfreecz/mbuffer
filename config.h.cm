@@ -1,0 +1,62 @@
+/*
+ *  Copyright (C) 2019, Thomas Maier-Komor
+ *
+ *  This file is part of mbuffer's source code.
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef CONFIG_H
+#define CONFIG_H
+
+/* package */
+#cmakedefine PACKAGE
+
+/* version of mbuffer */
+#define PACKAGE_VERSION "@PACKAGE_VERSION@"
+
+/* md5hashing is enabled by default, 
+   default is libmhash fallback is libmd5 */
+#cmakedefine HAVE_MD5_H
+#cmakedefine HAVE_LIBMD5
+#cmakedefine HAVE_LIBCRYPTO
+
+/* Define if you have a working `mmap' system call.  */
+#cmakedefine HAVE_MMAP
+
+/* Define if you have the hstrerror function.  */
+#cmakedefine HAVE_HSTRERROR
+
+/* Define if you have the getaddrinfo function.  */
+#cmakedefine HAVE_GETADDRINFO
+
+/* Define if `st_blksize' is member of `struct stat'. */
+#cmakedefine HAVE_STRUCT_STAT_ST_BLKSIZE
+
+/* Define if you have libsendfile. */
+#cmakedefine HAVE_SENDFILE
+#cmakedefine HAVE_SENDFILE_H
+
+/* seteuid ? */
+#cmakedefine HAVE_SETEUID
+
+/* alloca in alloca.h */
+#cmakedefine HAVE_ALLOCA_H
+
+#define LIBC_OPEN @LF_OPEN@
+#define LIBC_READ @LF_READ@
+#define LIBC_WRITE @LF_WRITE@
+#define LIBC_FSTAT @LF_FSTAT@
+
+#endif
