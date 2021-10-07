@@ -1,3 +1,9 @@
+20211004:
+- make TCPTimeout=0 disable the TCP timeout
+- changed default TCP timeout from 10s to 100s
+- TCP timeout now can be give with suffixes ms,s,min,h
+- documented option for TCP timeout
+
 20210829:
 - enhancement: accept IPv6 addresses in square bracket format
 - enhancement: more detailed warning message for connect failures

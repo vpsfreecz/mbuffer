@@ -143,6 +143,10 @@ called for, however with this option, writes will continue until two in a row
 fail with 'no space left', indicating the real end of the tape.  This will allow
 a little extra data to fit on each tape.
 .TP 
+\fB\-\-tcptimeo\fR <\fItime\fP>
+Set the TCP timeout threshold. The default value is 10s. Arguments
+without dimension are interpreted as usec. Argument dimensions can be
+us, ms, s or sec, m or min, h.
 \fB\-6\fR
 Force IPv6 mode for the following network I/O options on command line.
 \fB\-4\fR

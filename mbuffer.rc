@@ -73,7 +73,8 @@
 # TCPbufsize = 0
 
 ## TCP transmission timeout [msec]
-# TCPtimeout = 0
+# accepts dimensions sec,s,ms,us,min,h
+# TCPtimeout = 100s
 
 ## tape aware out-of-space handling
 ## valid values are: true, false, 0, 1, on, off

@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 VERSION_H=${1:-version.h}
 NEWFILE=`mktemp -t version.h.XXXXXXXXXX`

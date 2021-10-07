@@ -96,6 +96,7 @@ char
 
 extern void *watchdogThread(void *ignored);
 
+
 static const char *calcval(const char *arg, unsigned long long *res)
 {
 	char ch;
@@ -152,6 +153,39 @@ static const char *calcval(const char *arg, unsigned long long *res)
 		break;
 	}
 	return "unrecognized argument";
+}
+
+
+static double calctime(const char *str, double def)
+{
+	char dim[8];
+	double d = (double)def;
+	
+	dim[0] = 0;
+	int n = sscanf(str,"%lf%7s",&d,dim);
+	if ((n <= 0) || (n > 2)) {
+		errormsg("invalid time argument \"%s\"\n",str);
+		d = def;
+	}
+	if (0 == dim[0]) {
+		d *= 1E-3;
+	} else if (0 == strcmp(dim,"ms")) {
+		d *= 1E-3;
+	} else if (0 == strcmp(dim,"msec")) {
+		d *= 1E-3;
+	} else if (0 == strcmp(dim,"s")) {
+		
+	} else if (0 == strcmp(dim,"m")) {
+		d *= 60;
+	} else if (0 == strcmp(dim,"min")) {
+		d *= 60;
+	} else if (0 == strcmp(dim,"h")) {
+		d *= 60 * 60;
+	} else {
+		errormsg("invalid time dimension in argument \"%s\"\n",str);
+		d = def;
+	}
+	return d;
 }
 
 
@@ -409,8 +443,8 @@ void readConfigFile(const char *cfname)
 				TCPBufSize = value;
 				debugmsg("TCPBufSize = %lu\n",TCPBufSize);
 			} else if (strcasecmp(key,"tcptimeout") == 0) {
-				TCPTimeout = value;
-				debugmsg("TCPTimeout = %lu\n",TCPTimeout);
+				TCPTimeout = calctime(valuestr,TCPTimeout);
+				debugmsg("TCPTimeout = %f\n",TCPTimeout);
 			} else {
 				warningmsg("unknown parameter: %s\n",key);
 			}
@@ -643,6 +677,7 @@ static void usage(void)
 }
 
 
+
 static unsigned long long calcint(const char **argv, int c, unsigned long long def)
 {
 	char ch;
@@ -760,8 +795,8 @@ int parseOption(int c, int argc, const char **argv)
 		TCPBufSize = calcint(argv,++c,TCPBufSize);
 		debugmsg("TCPBufSize = %lu\n",TCPBufSize);
 	} else if (!strcmp("--tcptimeo",argv[c])) {
-		TCPTimeout = calcint(argv,++c,TCPTimeout);
-		debugmsg("TCPTimeout = %lu\n",TCPTimeout);
+		TCPTimeout = calctime(argv[++c],TCPTimeout);
+		debugmsg("TCPTimeout = %lf\n",TCPTimeout);
 	} else if (!strcmp("--tapeaware",argv[c])) {
 		TapeAware = 1;
 		debugmsg("sensing early end-of-tape warning\n");

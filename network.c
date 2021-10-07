@@ -25,6 +25,7 @@
 
 
 #include <errno.h>
+#include <math.h>
 #include <netdb.h>
 #include <net/if.h>
 #include <stdio.h>
@@ -44,7 +45,8 @@
 #include "settings.h"
 #include "log.h"
 
-int32_t TCPBufSize = 0, TCPTimeout = 10000000;
+int32_t TCPBufSize = 0;
+double TCPTimeout = 100;
 #if defined(PF_INET6) && defined(PF_UNSPEC)
 int AddrFam = PF_UNSPEC;
 #else
@@ -248,10 +250,12 @@ void initNetworkInput(const char *addr)
 	if (TCPBufSize)
 		setTCPBufferSize(In,SO_RCVBUF);
 	struct timeval timeo;
-	timeo.tv_sec = TCPTimeout/1000000;
-	timeo.tv_usec = TCPTimeout%1000000;
+	timeo.tv_sec = floor(TCPTimeout);
+	timeo.tv_usec = TCPTimeout-timeo.tv_sec*1000000;
 	if (-1 == setsockopt(In, SOL_SOCKET, SO_RCVTIMEO, &timeo, sizeof(timeo)))
 		warningmsg("cannot set socket send timeout: %s\n",strerror(errno));
+	else
+		debugmsg("disabled TCP receive timeout\n");
 	(void) close(sock);
 }
 
@@ -307,11 +311,15 @@ dest_t *createNetworkOutput(const char *addr)
 	} else {
 		if (TCPBufSize)
 			setTCPBufferSize(fd,SO_SNDBUF);
-		struct timeval timeo;
-		timeo.tv_sec = TCPTimeout/1000000;
-		timeo.tv_usec = TCPTimeout%1000000;
-		if (-1 == setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeo, sizeof(timeo)))
-			warningmsg("cannot set socket send timeout: %s\n",strerror(errno));
+		if (TCPTimeout) {
+			struct timeval timeo;
+			timeo.tv_sec = floor(TCPTimeout);
+			timeo.tv_usec = (TCPTimeout-timeo.tv_sec)*1E6;
+			if (-1 == setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeo, sizeof(timeo)))
+				warningmsg("cannot set socket send timeout: %s\n",strerror(errno));
+		} else {
+			debugmsg("disabled TCP send timeout\n");
+		}
 	}
 	d = (dest_t *) malloc(sizeof(dest_t));
 	d->arg = addr;
@@ -382,11 +390,17 @@ static void openNetworkInput(const char *host, unsigned short port)
 		if (host[0] == 0) {
 			infomsg("accepted connection from %s\n",inet_ntoa(caddr.sin_addr));
 			(void) close(sock);
-			struct timeval timeo;
-			timeo.tv_sec = TCPTimeout/1000000;
-			timeo.tv_usec = TCPTimeout%1000000;
-			if (-1 == setsockopt(In, SOL_SOCKET, SO_RCVTIMEO, &timeo, sizeof(timeo)))
-				warningmsg("cannot set socket send timeout: %s\n",strerror(errno));
+			if (TCPTimeout) {
+				struct timeval timeo;
+				timeo.tv_sec = floor(TCPTimeout);
+				timeo.tv_usec = (TCPTimeout-timeo.tv_sec)*1000000;
+				if (-1 == setsockopt(In, SOL_SOCKET, SO_RCVTIMEO, &timeo, sizeof(timeo)))
+					warningmsg("cannot set socket send timeout: %s\n",strerror(errno));
+				else
+					infomsg("set TCP receive timeout to %usec, %uusec\n",timeo.tv_sec,timeo.tv_usec);
+			} else {
+				debugmsg("disabled TCP receive timeout\n");
+			}
 			return;
 		}
 		for (p = h->h_addr_list; *p; ++p) {
@@ -490,12 +504,17 @@ static void openNetworkOutput(dest_t *dest)
 		errormsg("could not connect to %s:%s: %s\n",dest->name,dest->port,dest->result);
 		(void) close(out);
 		out = -1;
-	} else {
+	} else if (TCPTimeout) {
 		struct timeval timeo;
-		timeo.tv_sec = TCPTimeout/1000000;
-		timeo.tv_usec = TCPTimeout%1000000;
+		timeo.tv_sec = floor(TCPTimeout);
+		timeo.tv_usec = (TCPTimeout-timeo.tv_sec)*1000000;
 		if (-1 == setsockopt(out, SOL_SOCKET, SO_SNDTIMEO, &timeo, sizeof(timeo)))
 			warningmsg("cannot set socket send timeout: %s\n",strerror(errno));
+		else
+			infomsg("set TCP transmit timeout to %usec, %uusec\n",timeo.tv_sec,timeo.tv_usec);
+	} else {
+		debugmsg("disabled TCP transmint timeout\n");
+
 	}
 	dest->fd = out;
 }

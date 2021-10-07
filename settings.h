@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2000-2020, Thomas Maier-Komor
+ *  Copyright (C) 2000-2021, Thomas Maier-Komor
  *
  *  This is the source code of mbuffer.
  *
@@ -23,7 +23,8 @@
 #include <time.h>
 #include <sys/types.h>
 
-extern int32_t TCPBufSize, TCPTimeout;
+extern int32_t TCPBufSize;
+extern double TCPTimeout;
 
 extern clockid_t
 	ClockSrc;
