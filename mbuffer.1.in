@@ -215,8 +215,11 @@ in the ~/.mbuffer.rc file:
 
 
 .SH "ENVIRONMENT VARIABLES"
-If TMPDIR is set, mbuffer allocates storage for file-based buffers in this
+If \fBTMPDIR\fR is set, mbuffer allocates storage for file-based buffers in this
 directory\&. If TMPDIR is unset, \fI/var/tmp\fR will be used\&.
+
+\fBMBUFFERRC\fP can be used to set a custom mbuffer.rc config file.
+.SH "FILES"
 .SH "FILES"
 .LP 
 \fI$PREFIX/bin/mbuffer\fP 

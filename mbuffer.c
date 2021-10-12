@@ -1034,6 +1034,9 @@ static void initDefaults()
 	const char *home = getenv("HOME");
 	readConfigFile("/etc/mbuffer.rc");
 	readConfigFile(PREFIX "/etc/mbuffer.rc");
+	const char *userrc = getenv("MBUFFERRC");
+	if (userrc)
+		readConfigFile(userrc);
 	if (home == 0) {
 		warningmsg("HOME environment variable not set - unable to find defaults file\n");
 		return;

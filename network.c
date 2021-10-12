@@ -249,13 +249,15 @@ void initNetworkInput(const char *addr)
 	debugmsg("input connection accepted\n");
 	if (TCPBufSize)
 		setTCPBufferSize(In,SO_RCVBUF);
-	struct timeval timeo;
-	timeo.tv_sec = floor(TCPTimeout);
-	timeo.tv_usec = TCPTimeout-timeo.tv_sec*1000000;
-	if (-1 == setsockopt(In, SOL_SOCKET, SO_RCVTIMEO, &timeo, sizeof(timeo)))
-		warningmsg("cannot set socket send timeout: %s\n",strerror(errno));
-	else
+	if (TCPTimeout > 0) {
+		struct timeval timeo;
+		timeo.tv_sec = floor(TCPTimeout);
+		timeo.tv_usec = (TCPTimeout-timeo.tv_sec)*1000000;
+		if (-1 == setsockopt(In, SOL_SOCKET, SO_RCVTIMEO, &timeo, sizeof(timeo)))
+			warningmsg("cannot set socket send timeout: %s\n",strerror(errno));
+	} else {
 		debugmsg("disabled TCP receive timeout\n");
+	}
 	(void) close(sock);
 }
 

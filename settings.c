@@ -107,7 +107,7 @@ static const char *calcval(const char *arg, unsigned long long *res)
 		abort();
 		break;
 	case 2:
-		if (d <= 0)
+		if (d < 0)
 			return "negative value out of range";
 		switch (ch) {
 		case 'k':
@@ -145,7 +145,7 @@ static const char *calcval(const char *arg, unsigned long long *res)
 			return "invalid dimension";
 		}
 	case 1:
-		if (d <= 0)
+		if (d < 0)
 			return "value out of range";
 		*res = d;
 		return 0;
@@ -415,6 +415,9 @@ void readConfigFile(const char *cfname)
 			}
 		} else if (strcasecmp(key,"verbose") == 0) {
 			setVerbose(valuestr);
+		} else if (strcasecmp(key,"tcptimeout") == 0) {
+			TCPTimeout = calctime(valuestr,TCPTimeout);
+			debugmsg("TCPTimeout = %f\n",TCPTimeout);
 		} else {
 			unsigned long long value = 0;
 			const char *argerror = calcval(valuestr,&value);
@@ -442,9 +445,6 @@ void readConfigFile(const char *cfname)
 			} else if (strcasecmp(key,"tcpbufsize") == 0) {
 				TCPBufSize = value;
 				debugmsg("TCPBufSize = %lu\n",TCPBufSize);
-			} else if (strcasecmp(key,"tcptimeout") == 0) {
-				TCPTimeout = calctime(valuestr,TCPTimeout);
-				debugmsg("TCPTimeout = %f\n",TCPTimeout);
 			} else {
 				warningmsg("unknown parameter: %s\n",key);
 			}

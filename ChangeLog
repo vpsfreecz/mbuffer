@@ -1,3 +1,7 @@
+20211011:
+- fixes related to TCP timeout handling
+- enhancement: support setting config file via env var MBUFFERRC
+
 20211004:
 - make TCPTimeout=0 disable the TCP timeout
 - changed default TCP timeout from 10s to 100s
